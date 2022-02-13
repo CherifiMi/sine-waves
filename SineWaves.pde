@@ -1,34 +1,42 @@
+int xspacing = 4;   // How far apart should each horizontal location be spaced
+int w;              // Width of entire wave
 
-float[] angles;
-float r = 4.0;
+float theta = 0.0;  // Start angle at 0
+float amplitude = 75.0;  // Height of wave
+float period = 1200.0;  // How many pixels before the wave repeats
+float dx;  // Value for incrementing X, a function of period and xspacing
+float[] yvalues;  // Using an array to store height values for the wave
 
-void setup() { 
-    background(20);
-    size(600,400);
-    var total = floor(width/(r*2));
-    for (int i = 0; i < total+1; ++i) {
-        angles[i] = map(i, 0, total, 0, (0+440/1000) * PI*2);
-    }
-     
+void setup() {
+  size(940, 360);
+  w = width+16;
+  dx = (TWO_PI / period) * xspacing;
+  yvalues = new float[w/xspacing];
 }
 
 void draw() {
-    background(0);
-  translate(300, 200);
-  fill(252, 238, 33);
-  stroke(252, 238, 33);
+  background(0);
+  calcWave();
+  renderWave();
+}
 
+void calcWave() {
+  // Increment theta (try different values for 'angular velocity' here
+  theta += 0.02;
 
-  beginShape();
-  for (int i = 0; i < 10; ++i) {
-      var y = map(sin(angles[i]), -1, 1, -200, 200);
-      strokeWeight(4);
-      var x = map(i, 0, angles.length, -300, 300);
-      circle(x, y, r * 2);
-      angles[i] += 0.02;
-      println("hiiiiii");
+  // For every x value, calculate a y value with sine function
+  float x = theta;
+  for (int i = 0; i < yvalues.length; i++) {
+    yvalues[i] = sin(x)*amplitude;
+    x+=dx;
   }
-  endShape(CLOSE);
-  
- 
+}
+
+void renderWave() {
+  noStroke();
+  fill(255);
+  // A simple way to draw the wave with an ellipse at each location
+  for (int x = 0; x < yvalues.length; x++) {
+    ellipse(x*xspacing, height/2+yvalues[x], 16, 16);
+  }
 }
